@@ -423,8 +423,10 @@ class MainWindow(QMainWindow):
         # Throttling regulators registry map
         self.regulators = defaultdict(BandwidthRegulator)
         
-        # Persistence rules configuration database setup
-        self.rules_file = "shaper_rules.json"
+        # Persistence rules configuration database setup inside AppData for system-wide launch persistence
+        appdata_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "Darkstar", "NetShaper")
+        os.makedirs(appdata_dir, exist_ok=True)
+        self.rules_file = os.path.join(appdata_dir, "shaper_rules.json")
         self.rules = {}
         self.load_rules()
 
@@ -854,6 +856,14 @@ class MainWindow(QMainWindow):
         self.status_lbl = QLabel("🟢 Engine Ready. System operational.")
         self.status_lbl.setStyleSheet(f"color: {COLOR_GREEN}; font-size: 11px; padding-left: 10px;")
         self.statusBar().addWidget(self.status_lbl)
+
+        # Set interactive pointer cursors for all buttons, checkboxes, and comboboxes for premium UX
+        for btn in self.findChildren(QPushButton):
+            btn.setCursor(Qt.PointingHandCursor)
+        for cb in self.findChildren(QCheckBox):
+            cb.setCursor(Qt.PointingHandCursor)
+        for combo in self.findChildren(QComboBox):
+            combo.setCursor(Qt.PointingHandCursor)
 
     def sync_input_states(self):
         """Enables/disables UI input entries based on checkbox states."""
