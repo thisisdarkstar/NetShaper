@@ -1,0 +1,8 @@
+# Core GUI library
+PySide6>=6.0.0
+
+# Process calculations and socket details
+psutil>=5.9.0
+
+# Packaging library (optional, for compiling to standalone executable)
+pyinstaller>=6.0.0

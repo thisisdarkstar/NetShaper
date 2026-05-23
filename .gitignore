@@ -10,6 +10,7 @@ __pycache__/
 
 # PyInstaller / Build Artifacts
 build/
+dist/
 *.spec
 
 # User local settings and rules database (do not push personal rules)
