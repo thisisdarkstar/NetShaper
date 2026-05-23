@@ -401,7 +401,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.metrics_updated.connect(self.update_process_tree)
-        self.setWindowTitle("Darkstar NetShaper (PySide6 Edition)")
+        self.setWindowTitle("NetShaper - Bandwidth Controller")
         
         # Load window icon
         icon_path = resource_path("netshaper_icon.png")
@@ -424,7 +424,7 @@ class MainWindow(QMainWindow):
         self.regulators = defaultdict(BandwidthRegulator)
         
         # Persistence rules configuration database setup inside AppData for system-wide launch persistence
-        appdata_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "Darkstar", "NetShaper")
+        appdata_dir = os.path.join(os.environ.get("APPDATA", os.path.expanduser("~")), "NetShaper")
         os.makedirs(appdata_dir, exist_ok=True)
         self.rules_file = os.path.join(appdata_dir, "shaper_rules.json")
         self.rules = {}
@@ -610,7 +610,7 @@ class MainWindow(QMainWindow):
         # 1. Title Banner Frame
         title_layout = QHBoxLayout()
         
-        title_label = QLabel("⚡ DARKSTAR NETSHAPER")
+        title_label = QLabel("⚡ NETSHAPER")
         title_font = QFont("Segoe UI Semibold", 16)
         title_font.setBold(True)
         title_label.setFont(title_font)
@@ -623,7 +623,7 @@ class MainWindow(QMainWindow):
         
         main_layout.addLayout(title_layout)
         
-        subtitle = QLabel("Premium, Hardware-Accelerated PySide6 Bandwidth Regulating Suite")
+        subtitle = QLabel("Real-Time Traffic Shaper & Network Socket Inspector")
         subtitle.setStyleSheet(f"color: {COLOR_MUTED}; font-size: 12px; margin-top: 4px; margin-bottom: 6px;")
         main_layout.addWidget(subtitle)
 
@@ -670,7 +670,7 @@ class MainWindow(QMainWindow):
         left_layout.setSpacing(8)
         
         left_header = QHBoxLayout()
-        search_lbl = QLabel("🔍 SEARCH APP:")
+        search_lbl = QLabel("🔍 FILTER PROCESS:")
         search_lbl.setStyleSheet(f"color: {COLOR_CYAN}; font-weight: bold; font-size: 11px;")
         left_header.addWidget(search_lbl)
         
