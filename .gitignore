@@ -1,0 +1,20 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyInstaller / Build Artifacts
+build/
+*.spec
+
+# User local settings and rules database (do not push personal rules)
+shaper_rules.json
+
+# Local system files
+.DS_Store
+Thumbs.db
