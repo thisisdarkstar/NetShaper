@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resources\netshaper_icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>NetShaper</AssemblyName>
+    <RootNamespace>NetShaper</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyTitle>NetShaper - Bandwidth Controller</AssemblyTitle>
+    <Product>NetShaper</Product>
+    <Description>Hardware-Accelerated Native Windows Bandwidth Management Suite</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\netshaper_icon.ico" />
+    <Resource Include="Resources\netshaper_icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Diagnostics.Tracing.TraceEvent" Version="4.0.0" />
+  </ItemGroup>
+
+</Project>

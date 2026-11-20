@@ -1,67 +1,95 @@
 # ⚡ NETSHAPER
 
-An elegant, hardware-accelerated **PySide6** desktop bandwidth management suite for Windows. **NetShaper** acts as a system-wide traffic interception and bandwidth throttling controller using a built-in high-performance SOCKS5 proxy engine and dynamic Token Bucket rate limiters.
+An elegant, hardware-accelerated **C# / .NET** desktop bandwidth management suite built natively for Windows. **NetShaper** provides real-time system socket inspection, process-level bandwidth throttling using an asynchronous SOCKS5 proxy engine, transparent SNI TLS interceptor, and high-precision, non-blocking Token Bucket rate limiters.
 
-![NetShaper Banner](netshaper_icon.png)
+![NetShaper Banner](src/NetShaper/Resources/netshaper_icon.png)
 
-## ✨ Features
+## ✨ What's New in v1.0.0 (Official Windows Release)
 
-- **🚀 System-Wide Interception**: Dynamically reroutes and intercepts network traffic via a locally-bound SOCKS5 engine with registry integration.
-- **🔍 Active Socket Inspector**: Double-click any running process in the real-time activity grid to spawn an inspector window detailing all active TCP/IP sockets (`Direct` vs. `Shaped`).
-- **⏳ Token Bucket Shaping**: Smooth, modern multi-threaded token bucket bandwidth regulation with zero rate stuttering.
-- **⚡ Premium Hover UX**: High-impact UI featuring curated dark HSL palettes, clean layouts, and micro-animated slider toggles with pointer hand cursors on all interactive elements.
-- **🔒 Persistent Policies**: Save, load, and edit bandwidth cap rules (Download / Upload limits in KB/s, MB/s, Mbps, or Kbps) stored securely inside your global user AppData folder (`%APPDATA%\NetShaper\shaper_rules.json`) so your rules persist regardless of execution path.
+- **🚀 Native Windows Performance**: Rewritten from scratch in C# / .NET 8 targeting the Windows Desktop runtime with DirectX hardware acceleration.
+- **🎯 Direct Game & CDN Throttler (Vanguard Anti-Cheat Safe)**: Built-in transparent SNI TLS interceptor (`127.0.0.1:443`) and dynamic DNS redirection. Throttles game launchers (Riot Client / Valorant), download managers, and direct socket connections safely with zero DLL injection, zero kernel drivers, and 100% end-to-end TLS certificate validity.
+- **📊 Real-Time ETW Kernel Socket Monitor**: Direct Windows Kernel Event Tracing captures OS-wide network throughput (TCP and UDP) per process ID with microsecond latency.
+- **🛡️ Auto-Heal & Crash Recovery**: NetShaper automatically detects and fixes stale proxy configurations and hosts entries upon startup or abnormal exit, ensuring internet connectivity is never left broken.
+- **⏳ True Non-Blocking Token Bucket**: Eliminates thread contention and stuttering. Sockets calculate fractional rate delays and wait asynchronously without locking out other connections.
+- **🔍 Native IP Helper Socket Inspector**: Directly queries Windows `iphlpapi.dll` (`GetExtendedTcpTable`) to retrieve active TCP sockets and owning process IDs with zero disk I/O interference.
+- **⚡ Silky-Smooth UI & Virtualization**: Full DataGrid row recycling virtualization and optimized controls ensure 60 FPS performance, zero lag during scrolling, and instant dropdown menus.
+- **🔔 System Tray Integration**: Minimizes seamlessly to the Windows System Tray while actively shaping traffic in the background.
+- **🔒 Persistent Policies**: Saves and loads policies stored in your user AppData directory (`%APPDATA%\NetShaper\shaper_rules.json`).
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Core Framework**: PySide6 (Qt 6 for Python)
-- **Calculations & Process Hooks**: `psutil` & elevated `ctypes` Windows Registry hooks
-- **Interception Server**: Multi-threaded socket-level SOCKS5 proxy implementation
-- **Packaging**: Single-file PyInstaller elevated compilation (`--uac-admin`)
+- **Platform**: C# 12 / .NET 8+ Windows Desktop (WPF, DirectX Hardware Accelerated)
+- **Windows Subsystem APIs**: 
+  - `iphlpapi.dll`: Native TCP socket table enumeration (`GetExtendedTcpTable`) and socket termination (`SetTcpEntry`)
+  - `wininet.dll`: Real-time system proxy notification hooks (`InternetSetOption`)
+  - `Microsoft.Diagnostics.Tracing.TraceEvent`: Kernel ETW network packet monitoring
+- **Networking Engine**: Asynchronous dual-mode SOCKS5 / HTTP proxy & Transparent SNI TLS/HTTP forwarder
+- **Throttling Algorithm**: Microsecond-precision fractional Token Bucket with cumulative debt scheduling
 
 ---
 
-## 💻 Running the Application
+## 💻 Building & Running
 
-### Option A: Standalone Executable (Recommended)
-You can directly run the pre-built, production-ready standalone executable with the custom embedded icon.
-1. Navigate to the **GitHub Releases** tab of this repository and download **`net_shaper.exe`**.
-2. Right-click **`net_shaper.exe`** and select **Run as Administrator** (required for system-wide registry interception hooks).
+### Requirements
+- Windows 10 (1809+) or Windows 11 (x64)
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or higher
 
-### Option B: Build from Source
-To execute the source script or build it inside a local Python environment:
-
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/thisisdarkstar/NetShaper.git
-   cd NetShaper
-   ```
-
-2. Initialize and activate virtual environment:
-   ```bash
-   python -m venv .venv
-   .venv\Scripts\activate
-   ```
-
-3. Install required dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. Launch the application:
-   ```bash
-   python net_shaper.py
-   ```
-
----
-
-## 🔧 Building Standalone Binary
-To compile a brand new elevated single-file executable with custom icon bundles:
+### Option A: Run from Source
 ```bash
-pip install pyinstaller
-pyinstaller --clean --onefile --noconsole --uac-admin --icon netshaper_icon.ico --add-data "netshaper_icon.png;." -n net_shaper net_shaper.py
+# Clone the repository
+git clone https://github.com/thisisdarkstar/NetShaper.git
+cd NetShaper
+
+# Build and run the project
+dotnet run --project src/NetShaper/NetShaper.csproj
+```
+
+### Option B: Publish Single-File Executable
+To produce an optimized single-file executable (`publish/NetShaper.exe`):
+```bash
+dotnet publish src/NetShaper/NetShaper.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish/
+```
+
+Or for a fully self-contained standalone binary:
+```bash
+dotnet publish src/NetShaper/NetShaper.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish/
+```
+
+---
+
+## 📂 Architecture Overview
+
+```
+NetShaper/
+├── NetShaper.sln                            # Solution file
+├── src/
+│   └── NetShaper/
+│       ├── Core/
+│       │   ├── BandwidthRegulator.cs        # Non-blocking Token Bucket limiter
+│       │   ├── Socks5ProxyServer.cs         # Async dual-mode SOCKS5/HTTP proxy engine
+│       │   ├── TransparentSniInterceptor.cs # Raw TLS SNI transparent stream interceptor
+│       │   ├── HostsRedirectManager.cs      # Dynamic DNS redirection & cleanup
+│       │   ├── EtwNetworkMonitor.cs         # Windows Kernel ETW socket monitor
+│       │   ├── NetworkMonitor.cs            # iphlpapi.dll P/Invoke TCP inspector
+│       │   ├── WinInetProxyManager.cs       # Windows Registry & auto-heal recovery
+│       │   ├── WindowsQosManager.cs         # Policy-based QoS outbound packet scheduler
+│       │   ├── SystemTrayManager.cs         # Windows NotifyIcon tray integration
+│       │   ├── RuleManager.cs               # JSON persistence in %APPDATA%
+│       │   └── AppLauncher.cs               # Isolated process launcher with proxy routing
+│       ├── Models/
+│       │   ├── ShaperRule.cs                # Bandwidth rule models & unit parsing
+│       │   ├── ProcessNetworkInfo.cs        # Process monitor data model (INotifyPropertyChanged)
+│       │   └── ActiveSocketInfo.cs          # Active socket inspector model
+│       ├── Controls/
+│       │   └── ToggleSwitch.xaml            # Animated slider toggle switch
+│       ├── Views/
+│       │   ├── SocketsInspectorWindow.xaml  # Socket inspector popup window
+│       │   └── ToastNotification.xaml       # Non-blocking floating toast cards
+│       ├── MainWindow.xaml                  # Primary dashboard & process monitor
+│       ├── app.manifest                     # UAC requireAdministrator & DPI awareness
+│       └── Resources/                       # Embedded icons and branding
 ```
 
 ---

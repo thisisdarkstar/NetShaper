@@ -1,14 +1,21 @@
-# Virtual Environment
+# .NET Build Artifacts
+bin/
+obj/
+publish/
+publish_live/
+release_staging/
+*.zip
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Virtual Environment & Python (legacy / side-by-side)
 .venv/
 venv/
 ENV/
-
-# Python Cache
 __pycache__/
 *.py[cod]
-*$py.class
-
-# PyInstaller / Build Artifacts
 build/
 dist/
 *.spec
